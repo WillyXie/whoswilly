@@ -10,7 +10,7 @@ div#divRoot {
 
 div#divTop {
   width:  100%;
-  height: 200px;
+  height: 50px;
   position: fixed;
   top:  0px;
   left: 0px;
@@ -19,37 +19,23 @@ div#divTop {
 }
 
 div#divLeft {
-  width:  400px;
-  height: calc(100% - 200px);
+  width:  200px;
+  height: calc(100% - 50px);
   position: fixed;
-  top:  200px;
+  top:  50px;
   left: 0px;
 }
 
 div#divMain {
-  width:  calc(100% - 400px);
-  height: calc(100% - 200px);
+  width:  calc(100% - 200px);
+  height: calc(100% - 50px);
   margin: 0px;
   position: fixed;
-  top:    200px;
-  left:   400px;
+  top:    50px;
+  left:   200px;
   right:  0px;
   bottom: 0px;
   border-left: 2px solid black;
-}
-
-img#wheresWilly {
-  width:  550px;
-  height: 200px;
-  position: fixed;
-  left: -70px;
-  clip-path: ellipse(400px 400px at 5% 0%);
-}
-
-h1#topIntro {
-  position: absolute;
-  left:0px;
-  #left:400px;
 }
 
 a:hover {
