@@ -86,7 +86,7 @@ def main():
     f.write("\t\t\t\t<h2>Notes</h2>\n")
 
     for note in dictNote:
-      f.write(f"\t\t\t\t\t<a href=\"{note["file"]}\">{note["title"]}</a>\n")
+      f.write(f"\t\t\t\t<a href=\"{note["file"]}\">{note["title"]}</a></br>\n")
 
     f.write("\t\t\t</div> <!-- divLeft -->\n")
     f.write("\t\t</div><!-- divRoot -->\n")
