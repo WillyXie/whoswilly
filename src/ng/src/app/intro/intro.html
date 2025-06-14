@@ -1,0 +1,50 @@
+<p>
+  Welcome to my little corner of the website
+  where I share my notes, projects, and explorations of things that
+  interest me. For the very first, let me do a brief introduction
+  about myself. &#128583;<br/>
+  
+  I graduated from <a href="https://www.ncku.edu.tw/" target="_blank">
+  NCKU (National Cheng Kung University)</a> with my master degree in
+  Electronic Engineering. My research experience spans CPU 
+  micro-architecture, CNN accelerator, and SoC design. I'm deeply 
+  fascinated by computer architecture and system design, and I enjoy 
+  collaborating on challenging objects.<br/>
+  
+  I currently work as a CPU verification engineer at Google Silicon.
+  I'm passionate about computer architecture and pursue related
+  research and side projects. In my free time, I enjoy working out at
+  the gym to balance my love of Taiwanese cuisine. I'm also learning 
+  to snowboard, as I enjoy winter traveling and the stunning mountain
+  scenery.<br/>
+</p>
+
+<div class="pill-group">
+  @for (item of [
+    { title: "Github/WillyXie",   link: "https://github.com/WillyXie",},
+    { title: "LinkedIn",          link: "https://www.linkedin.com/in/willy-xie-56b083224/",},
+    { title: "Willy's Bookshelf", link: "notes/bookshelf.html",},
+    { title: "HackMD Page",       link: "https://hackmd.io/@whoswilly/HyxNd8o6a",},
+  ]; track item.title) {
+    <a
+      class="pill"
+      [href]="item.link"
+      target="_blank"
+      rel="noopener"
+    >
+      <span>{{ item.title }}</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="14"
+        viewBox="0 -960 960 960"
+        width="14"
+        fill="currentColor"
+      >
+        <path
+          d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"
+        />
+      </svg>
+    </a>
+  }
+</div>
+

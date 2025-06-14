@@ -1,0 +1,265 @@
+<p>
+September 2023
+ARM IHI0022K_amba_axi_protocol_spec
+</p>
+
+<p>
+A1.2 AXI Architecture
+The AXI protocol is transactions-based and defines five independent channels:
+• Write request, which has signal names beginning with AW.
+• Write data, which has signal names beginning with W.
+• Write response, which has signal names beginning with B.
+• Read request, which has signal names beginning with AR.
+• Read data, which has signal names beginning with R.
+
+A request channel carries control information that describes the nature of the data to be transferred. This is known
+as a request.
+
+The AXI protocol:
+• Permits address information to be issued ahead of the actual data transfer.
+• Supports multiple outstanding transactions.
+• Supports out-of-order completion of transactions.
+
+A1.2.2 Interface and interconnect
+The AXI protocol provides a single interface definition for the interfaces between:
+• A Manager and the interconnect
+• A Subordinate and the interconnect
+• A Manager and a Subordinate
+
+This interface definition supports many different interconnect implementations.
+An interconnect between devices is equivalent to another device with symmetrical Manager and Subordinate ports
+that the real Manager and Subordinate devices can be connected.
+
+A1.3.2 AXI transactions and transfers
+An AXI transfer is the communication in one cycle on an AXI channel.
+An AXI transaction is the set of transfers required for an AXI Manager to communicate with an AXI Subordinate.
+For example, a read transaction consists of a request transfer and one or more read data transfers.
+
+A3 AXI Transport
+A3.1.1 Clock
+Each AXI interface has a single clock signal, ACLK. All input signals are sampled on the rising edge of ACLK.
+All output signal changes can only occur after the rising edge of ACLK.
+On Manager and Subordinate interfaces, there must be no combinatorial paths between input and output signals.
+
+A3.1.2 Reset
+The AXI protocol uses a single active-LOW reset signal, ARESETn. The reset signal can be asserted
+asynchronously, but deassertion can only be synchronous with a rising edge of ACLK.
+During reset the following interface requirements apply:
+• A Manager interface must drive AWVALID, WVALID, and ARVALID LOW.
+• A Subordinate interface must drive BVALID and RVALID LOW.
+• All other signals can be driven to any value.
+The earliest point after reset that a Manager is permitted to begin driving AWVALID, WVALID, or ARVALID
+HIGH is at a rising ACLK edge after ARESETn is HIGH.
+
+A3.2 Channel handshake
+The source generates the VALID signal to indicate
+when the address, data, or control information is available. The destination generates the READY signal to
+indicate that it can accept the information. Transfer occurs only when both the VALID and READY signals are
+HIGH.
+
+A source is not permitted to wait until READY is asserted before asserting VALID.
+When VALID is asserted, it must remain asserted until the handshake occurs, at a rising clock edge when VALID
+and READY are both asserted.
+
+A destination is permitted to wait for VALID to be asserted before asserting the corresponding READY.
+If READY is asserted, it is permitted to deassert READY before VALID is asserted.
+
+A3.3 Write and read channels
+A3.3.2 Write data channel (W)
+A Subordinate that does not use WLAST can omit the input from its interface.
+The property WLAST_Present is used to determine if the WLAST signal is present.
+
+A3.3.5 Read data channel(R)
+A Manager that does not use RLAST can omit the input from its interface.
+The property RLAST_Present is used to determine if the RLAST signal is present.
+
+A3.4 Relationships between the channels
+The AXI protocol requires the following relationships to be maintained:
+• A write response must always follow the last write transfer in a write transaction.
+• Read data and responses must always follow the read request.
+• Channel handshakes must conform to the dependencies defined in A3.5 Dependencies between channel
+handshake signals.
+• When a Manager issues a write request, it must be able to provide all write data for that transaction, without
+dependency on other transactions from that Manager.
+• When a Manager has issued a write request and all write data, it must be able to accept all responses for that
+transaction, without dependency on other transactions from that Manager.
+• When a Manager has issued a read request, it must be able to accept all read data for that transaction, without
+dependency on other transactions from that Manager.
+– Note that a Manager can rely on read data returning in order from transactions that use the same ID, so
+the Manager only needs enough storage for read data from transactions with different IDs.
+• A Manager is permitted to wait for one transaction to complete before issuing another transaction request.
+• A Subordinate is permitted to wait for one transaction to complete before accepting or issuing transfers for
+another transaction.
+• A Subordinate must not block acceptance of data-less write requests due to transactions with leading write
+data.
+
+A3.5 Dependencies between channel handshake signals
+A3.5.1 Write transaction dependencies
+For transactions on the write channels, Figure A3.5 shows the handshake signal dependencies. The rules are:
+• The Manager must not wait for the Subordinate to assert AWREADY or WREADY before asserting
+AWVALID or WVALID. This applies to every write data transfer in a transaction.
+• The Subordinate can wait for AWVALID or WVALID, or both, before asserting AWREADY.
+• The Subordinate can assert AWREADY before AWVALID or WVALID, or both, are asserted.
+• The Subordinate can wait for AWVALID or WVALID, or both, before asserting WREADY.
+• The Subordinate can assert WREADY before AWVALID or WVALID, or both, are asserted.
+• The Subordinate must wait for AWVALID, AWREADY, WVALID, and WREADY to be asserted before
+asserting BVALID.
+• The Subordinate must also wait for WLAST to be asserted before asserting BVALID. This wait is because
+the write response, BRESP, must be signaled only after the last data transfer of a write transaction.
+• The Subordinate must not wait for the Manager to assert BREADY before asserting BVALID.
+• The Manager can wait for BVALID before asserting BREADY.
+• The Manager can assert BREADY before BVALID is asserted.
+
+A3.5.2 Read transaction dependencies
+• The Manager must not wait for the Subordinate to assert ARREADY before asserting ARVALID.
+• The Subordinate can wait for ARVALID to be asserted before it asserts ARREADY.
+• The Subordinate can assert ARREADY before ARVALID is asserted.
+• The Subordinate must wait for both ARVALID and ARREADY to be asserted before it asserts RVALID to
+indicate that valid data is available.
+• The Subordinate must not wait for the Manager to assert RREADY before asserting RVALID.
+• The Manager can wait for RVALID to be asserted before it asserts RREADY.
+• The Manager can assert RREADY before RVALID is asserted.
+
+A3.6.3 Snoop transaction dependencies
+• The Subordinate must not wait for the Manager to assert ACREADY before asserting ACVALID.
+• The Manager can wait for ACVALID to be asserted before it asserts ACREADY.
+• The Manager can assert ACREADY before ACVALID is asserted.
+• The Manager must wait for both ACVALID and ACREADY to be asserted before it asserts CRVALID to
+indicate that a valid response is available.
+• The Manager must not wait for the Subordinate to assert CRREADY before asserting CRVALID.
+• The Subordinate can wait for CRVALID to be asserted before it asserts CRREADY.
+• The Subordinate can assert CRREADY before CRVALID is asserted.
+
+A4 AXI Transactions
+A4.1 Transaction request
+A transaction must not cross a 4KB address boundary. This prevents a transaction from crossing a boundary
+between two Subordinates. It also limits the number of address increments that a Subordinate must support.
+A4.1.1 Size attribute
+Size indicates the maximum number of bytes in each data transfer.
+For read transactions, Size indicates how many data bytes must be valid in each read data transfer.
+For write transactions, Size indicates how many data byte lanes are permitted to be active. The write strobes
+indicate which of those bytes are valid in each transfer.
+The property SIZE_Present is used to determine if the AxSIZE signals are present.
+
+A4.1.2 Length attribute
+The Length attribute defines the number of data transfers in a transaction.
+The property LEN_Present is used to determine if the signals are present.
+The following rules apply to transaction Length:
+• For wrapping bursts, Length can be 2, 4, 8, or 16.
+• For fixed bursts, Length can be up to 16.
+• A transaction must not cross a 4KB address boundary.
+• Early termination of transactions is not supported.
+A4.1.3 Maximum number of bytes in a transaction
+The maximum number of bytes in a transaction is 4KB and transactions are not permitted to cross a 4KB boundary.
+The property Max_Transaction_Bytes defines the maximum size of a transaction in bytes as shown in Table A4.6.
+When connecting Manager and Subordinate interfaces, Max_transaction_Bytes of Manager larger than Subordinate is
+not compatible.
+
+A4.1.4 Burst attribute
+The Burst attribute describes how the address increments between transfers in a transaction.
+FIXED
+This Burst type is used for repeated accesses to the same location such as when loading or emptying a FIFO.
+• The address is the same for every transfer in the burst.
+• The byte lanes that are valid are constant for all transfers. However, within those byte lanes, the actual bytes
+that have WSTRB asserted can differ for each transfer.
+• The Length of the burst can be up to 16 transfers.
+• The FIXED burst type can only be used with WriteNoSnoop or ReadNoSnoop Opcodes. See Chapter A8
+Request Opcodes for more information.
+
+INCR (incrementing)
+With this Burst type, the address for each transfer is an increment of the address for the previous transfer. The
+increment value depends on the transaction Size.
+
+WRAP (wrapping)
+This Burst type is similar to INCR except that the address wraps around to a lower address if an upper address
+limit is reached. The following restrictions apply:
+• The start address must be aligned to the size of each transfer.
+• The Length of the burst must be 2, 4, 8, or 16 transfers.
+
+The behavior of a wrapping transaction is:
+• The lowest address accessed by the transaction is the start address aligned to the total size of the data to be
+transferred, that is Size * Length. This address is defined as the wrap boundary.
+• After each transfer, the address increments in the same way as for an INCR burst. However, if this
+incremented address is ((wrap boundary)+ (Size * Length)), then the address wraps round to the
+wrap boundary.
+• The first transfer in the transaction can use an address that is higher than the wrap boundary, subject to the
+restrictions that apply to wrapping transactions. The address wraps when the first address is higher than the
+wrap boundary. This Burst type is used for cache line accesses.
+
+The property BURST_Present is used to determine if the AxBURST signals are present.
+
+Fixed_Burst_Disable
+A Burst type of FIXED is not commonly used, and a property Fixed_Burst_Disable is defined in Table A4.11 to
+indicate if a component supports it.
+It's not compatible if Fixed burst is not supported in Subordinate but is possible generated by connected manager.
+
+A4.1.5 Transfer address
+The protocol supports communication between components that have different physical address space sizes.
+Components with different physical address space sizes must communicate as follows:
+• The component with the smaller physical address space must be positioned within an aligned window in the
+larger physical address space. Typically, the window is located at the bottom of the larger physical address
+space. However, it is acceptable for the component with the smaller physical address space to be positioned
+in an offset window within the larger physical address space.
+• An outgoing transaction must have the required additional higher-order bits added to the transaction address.
+• An incoming transaction must be examined so that:
+– A transaction that is within the address window has the higher-order address bits removed and is passed
+through.
+– A transaction that does not have the required higher-order address bits is suppressed.
+
+A4.1.8 Regular transactions
+The Regular attribute is defined, to identify transactions which meet the following criteria:
+• Length is 1, 2, 4, 8, or 16 transfers.
+• Size is the same as the data channel width if Length is greater than 1.
+• Burst is INCR or WRAP, not FIXED.
+• Address is aligned to the transaction container for INCR transactions.
+• Address is aligned to Size for WRAP transactions.
+
+A4.2 Write and read data
+A4.2.1 Write strobes
+There is one write strobe for each 8 bits of the write data channel, therefore WSTRB[n] corresponds to
+WDATA[(8n)+7:(8n)].
+When WVALID is HIGH:
+• Data bytes to be written have a corresponding write strobe set HIGH.
+• Inside of the transaction container any number of write strobes can be HIGH. If all write strobes are LOW,
+no data is written from that transfer.
+• Outside of the transaction container all write strobes must be LOW.
+When WVALID is LOW, the write strobes can take any value, although it is recommended that they are either
+driven LOW or held at their previous value.
+The property WSTRB_Present is used to indicate if the WSTRB signal is present on an interface.
+
+A4.2.4 Unaligned transfers
+For any transaction that is made up of data transfers wider than 1 byte, the first
+bytes accessed might be unaligned with the natural address boundary.
+A Manager can:
+• Use the low-order address lines to signal an unaligned start address.
+• Provide an aligned address and use the byte lane strobes to signal the unaligned start address.
+The Subordinate is not required to take special action based on any alignment information from the Manager.
+
+A4.3 Transaction response
+Every AXI transaction includes one or more response transfers sent by the Subordinate to indicate the result of the
+transaction.
+A4.3.1 Write response
+Write responses are transported using the BRESP signal on the write response channel.
+The BRESP and BCOMP signals are used to send write responses.
+BRESP is an optional signal. If the BRESP_WIDTH property is 0, it is not present and assumed to be 0b000
+(OKAY).
+BCOMP is only present if an interface is using a feature that can have two write responses, these are:
+• Cache maintenance for Persistence, see A10.8 CMOs for Persistence.
+• Memory Tagging, see A13.2 Memory Tagging Extension (MTE).
+
+A4.3.2 Read response
+The read response indicates if the read was successful and whether the data in that transfer is valid.
+Read responses are transported using the RRESP signal on the read data channel. There is a read response with
+every read data transfer in a transaction. The response value is not required to be the same for every read data
+transfer in a transaction.
+
+</p>
+
+<h3>Reference</h3>
+<li>
+  <ul>
+    <a href="https://developer.arm.com/documentation/ihi0022/latest/" target="blank">
+      AMBA AXI Protocol Specification
+    </a>
+  </ul>
+</li>

@@ -1,0 +1,27 @@
+<header>
+  <div class="content">
+    <div class="left-side">
+      <h1>Hello, there!!🎉🎉</h1>
+    </div>
+  </div>
+
+  <div class="pill-group">
+    @for (item of mainContents; track item.title) {
+      <button
+        class="pill"
+        (click)="switchComponent(item.componentString);"
+      >
+      <span>{{ item.title }}</span>
+      </button>
+    }
+  </div>
+</header>
+
+<div class="divider" role="separator" aria-label="Divider"></div>
+
+<ng-container
+  *ngComponentOutlet="curComponentType;"
+></ng-container>
+
+<router-outlet />
+

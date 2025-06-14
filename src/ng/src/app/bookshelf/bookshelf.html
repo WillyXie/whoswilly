@@ -1,0 +1,50 @@
+<main>
+  <mat-drawer-container class="example-container" autosize>
+    <mat-drawer #drawer class="pill-group" mode="side">
+      @for (item of [
+        { title: "Angular",               componentString: "ang",},
+        { title: "AXI",                   componentString: "axi",},
+        { title: "Computer Architecture", componentString: "ca",},
+        { title: "PSS",                   componentString: "pss",},
+        { title: "System Verilog",        componentString: "sv",},
+        { title: "UVM",                   componentString: "uvm",},
+        { title: "Website Development",   componentString: "web",},
+      ]; track item.title) {
+        <button
+          class="pill"
+          (click)="switchComponent(item.componentString)"
+        >
+        <!--
+          matButton="elevated"
+        -->
+          <span>{{ item.title }}</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="14"
+            viewBox="0 -960 960 960"
+            width="14"
+            fill="currentColor"
+          >
+            <path
+              d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z"
+            />
+          </svg>
+        </button>
+      }
+    </mat-drawer>
+  
+    <div class="example-sidenav-content">
+      <button type="button" matButton (click)="drawer.toggle()">
+        Toggle sidenav
+      </button>
+    </div>
+
+    <div style="border: 2px dashed #ccc; padding: 15px; margin-top: 20px;">
+      <ng-container
+        *ngComponentOutlet="currentComponentType;"
+      ></ng-container>
+        <!--inputs: currentComponentInputs"-->
+    </div>
+  </mat-drawer-container>
+</main>
+
