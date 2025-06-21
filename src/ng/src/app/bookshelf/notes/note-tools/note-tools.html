@@ -1,0 +1,61 @@
+<h2>
+  <a
+    href="https://graphviz.org/"
+    target="_blank"
+  >
+    Graphviz
+  </a>
+</h2>
+
+<h3>Download Graphviz</h3>
+<code>
+  $ sudo apt install graphviz
+</code>
+
+<h3>Quick Start with CLI</h3>
+<a
+  href="https://graphviz.org/doc/info/command.html"
+  target="_blank"
+>
+  Graphviz Command Line
+</a>
+<code>
+  $ echo 'digraph {{'{'}} a -{{'>'}} b {{'}'}}' | dot -Tsvg {{'>'}} graphviz.svg
+</code>
+
+<input
+  type="text"
+  id="myInput"
+  class="dot"
+  value="digraph {{'{'}} a -{{'>'}} b {{'}'}}"
+/>
+<button
+  (click)="genSVG()"
+>
+Generate SVG
+</button>
+
+<div
+  id="dot-example"
+>
+  {{ dotSource[0].source }}
+</div>
+
+<h3>
+  Website Integration with 
+  <a 
+    href="https://hpcc-systems.github.io/hpcc-js-wasm/"
+    target="_blank"
+  >
+    hpcc-js/wasm
+  </a>
+</h3>
+<a
+  href="https://www.npmjs.com/package/&#64;hpcc-js/wasm-graphviz?ref=pkgstats.com"
+>
+npm : &#64;hpcc-js/wasm-graphviz
+</a>
+<code>
+  $ npm install &#64;hpcc-js/wasm-graphviz
+</code>
+

@@ -22,6 +22,8 @@
     "@angular/platform-server": "^20.0.0",
     "@angular/router": "^20.0.0",
     "@angular/ssr": "^20.0.1",
+    "@hpcc-js/wasm": "^2.23.0",
+    "@hpcc-js/wasm-graphviz": "^1.8.0",
     "express": "^5.1.0",
     "prerender": "^5.21.6",
     "rxjs": "~7.8.0",

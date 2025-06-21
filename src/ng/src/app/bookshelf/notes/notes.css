@@ -173,3 +173,9 @@ main {
     margin-block: 1.5rem;
   }
 }
+
+code {
+  display: flex;
+  width: 100%;
+  font-family: monospace;
+}

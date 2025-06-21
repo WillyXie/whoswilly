@@ -1,7 +1,13 @@
-<!--
-  [time=Feb 9, 2025]
-  Author : cyxie102425@gmail.com
--->
+<h2>Javascript</h2>
+<code>
+  element = document.getElementById("placeholder");
+  elements = document.getElementsByClassName("dot");
+  for (let idx = 0; idx < elements.length; idx++) {{'{'}}
+    console.log(elements[idx].innerHTML);
+    const dot = elements[idx].innerHTML;
+    elements[idx].innerHTML = graphviz.layout(dot, "svg", "dot");
+    {{'}'}}
+</code>
 
 <h2 id="ref">Reference</h2>
 
