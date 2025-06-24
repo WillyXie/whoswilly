@@ -1,6 +1,11 @@
 <main>
   <mat-drawer-container class="example-container" autosize>
-    <mat-drawer #drawer class="pill-group" mode="side">
+    <mat-drawer
+      #drawer
+      class="pill-group"
+      mode="side"
+      opened="true"
+    >
       @for (item of [
         { title: "Angular",               componentString: "ang",},
         { title: "AXI",                   componentString: "axi",},
