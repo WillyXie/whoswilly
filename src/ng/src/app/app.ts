@@ -1,15 +1,12 @@
 import { Component, Type }  from '@angular/core';
 import { CommonModule}      from '@angular/common';
-import { RouterOutlet }     from '@angular/router';
-
-import { Home }      from './home/home';
-import { Resume }      from './resume/resume';
-import { Bookshelf }  from './bookshelf/bookshelf';
+import { RouterLink, RouterOutlet }     from '@angular/router';
 
 @Component({
   selector: 'app-root',
   imports: [
     CommonModule,
+    RouterLink,
     RouterOutlet,
   ],
   templateUrl: './app.html',
@@ -17,21 +14,22 @@ import { Bookshelf }  from './bookshelf/bookshelf';
 })
 
 export class App {
-  mainContents = [
-    { title: "HOME",      componentString: "home",},
-    { title: "RESUME",    componentString: "resume",},
-    { title: "BOOKSHELF", componentString: "book",},
-  ];
+  // If the dropdown is open or closed.
+  isOpen = false;
 
-  curComponentType: Type<any> | null = Home;
-  switchComponent(componentName: string) {
-    if (componentName === "book") {
-      this.curComponentType = Bookshelf;
-    } else if (componentName === "resume") {
-      this.curComponentType = Resume;
-    } else if (componentName === "home") {
-      this.curComponentType = Home;
-    }
+  toggleDropdown() {
+    this.isOpen = !this.isOpen;
   }
+
+  noteContents = [
+    { title: "Mindmap",               link: "mmap",},
+    { title: "AXI",                   link: "axi",},
+    { title: "Computer Architecture", link: "ca",},
+    { title: "PSS",                   link: "pss",},
+    { title: "System Verilog",        link: "sv",},
+    { title: "Tools",                 link: "tools",},
+    { title: "UVM",                   link: "uvm",},
+    { title: "Website Development",   link: "web",},
+  ];
 }
 

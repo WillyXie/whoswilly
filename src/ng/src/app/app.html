@@ -2,27 +2,52 @@
 <header class="bg-white shadow-sm py-4 px-6 md:px-12 fixed w-full z-50 top-0">
   <div class="container mx-auto flex justify-between items-center">
     <!-- Logo -->
-    <!--<a href="#" class="text-2xl font-bold text-indigo-600">Hi there!! 🎉</a>-->
     <p class="text-2xl font-bold text-indigo-600">Hi there!! 🎉</p>
 
     <div class="flex">
       <nav class="hidden md:flex space-x-8">
-        @for (item of mainContents; track item.title) {
-          <button
-            class="text-gray-600 hover:text-indigo-600 font-medium transition-colors duration-200 rounded-md py-2 px-3"
-            (click)="switchComponent(item.componentString);"
-          >
-          <span>{{ item.title }}</span>
-          </button>
-        }
-      </nav>
+        <a class="main-nav" routerLink="/home">HOME</a>
+        <a class="main-nav" routerLink="/resume">RESUME</a>
 
-      <!-- Right Sidebar Toggle Button -->
-      <button class="text-gray-600 hover:text-indigo-600 focus:outline-none lg:block" id="right-sidebar-toggle">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-      </button>
+        <!-- Dropdown menu of contents -->
+        <div class="relative inline-block text-left">
+          <!-- The main button that triggers the dropdown. -->
+          <a
+            class="main-nav inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            id="menu-button"
+            aria-expanded="true"
+            aria-haspopup="true"
+            (click)="toggleDropdown()"
+          >
+            NOTES
+            <svg
+              class="-mr-1 ml-2 h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </a>
+        
+          <!-- The dropdown menu itself. -->
+          <div
+            *ngIf="isOpen"
+            class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="menu-button"
+            tabindex="-1"
+          >
+            <div class="py-1" role="none">
+              <!-- Dropdown menu items -->
+              @for (item of noteContents; track item.title) {
+                <a class="pill" routerLink="/{{item.link}}">{{item.title}}</a>
+              }
+            </div>
+          </div>
+        </div>
+      </nav>
     </div>
   </div>
 </header>
@@ -31,9 +56,7 @@
 
 <!-- Main -->
 <main>
-  <ng-container
-    *ngComponentOutlet="curComponentType;"
-  ></ng-container>
+  <router-outlet></router-outlet>
 </main>
 
 <!-- Footer -->
@@ -49,6 +72,4 @@
     -->
   </div>
 </footer>
-
-<router-outlet />
 

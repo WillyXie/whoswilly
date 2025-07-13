@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-note-pss',
   imports: [],
   templateUrl: './note-pss.html',
-  styleUrl: '../notes.css'
+  styleUrl: './note-pss.css',
 })
 export class NotePss {
 

@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-note-system-verilog',
   imports: [],
   templateUrl: './note-system-verilog.html',
-  styleUrl: '../notes.css'
+  styleUrl: './note-system-verilog.css',
 })
 export class NoteSystemVerilog {
 

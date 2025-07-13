@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-note-axi',
   imports: [],
   templateUrl: './note-axi.html',
-  styleUrl: '../notes.css'
+  styleUrl: './note-axi.css',
 })
 export class NoteAxi {
 

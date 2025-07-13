@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-note-computer-architecture',
   imports: [],
   templateUrl: './note-computer-architecture.html',
-  styleUrl: '../notes.css'
+  styleUrl: './note-computer-architecture.css',
 })
 export class NoteComputerArchitecture {
 

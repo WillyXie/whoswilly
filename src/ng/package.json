@@ -24,10 +24,15 @@
     "@angular/ssr": "^20.0.1",
     "@hpcc-js/wasm": "^2.23.0",
     "@hpcc-js/wasm-graphviz": "^1.8.0",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/prismjs": "^1.26.5",
     "component": "^1.1.0",
     "express": "^5.1.0",
+    "postcss": "^8.5.6",
     "prerender": "^5.21.6",
+    "prismjs": "^1.30.0",
     "rxjs": "~7.8.0",
+    "tailwindcss": "^4.1.11",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

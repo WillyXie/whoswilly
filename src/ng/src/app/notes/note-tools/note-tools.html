@@ -1,0 +1,120 @@
+<h2>
+  <a
+    href="https://graphviz.org/"
+    target="_blank"
+  >
+    Graphviz
+  </a>
+</h2>
+
+<h3>Download Graphviz</h3>
+<pre><code class="language-bash">$ sudo apt install graphviz</code></pre>
+
+<h3>Quick Start with CLI</h3>
+<a
+  href="https://graphviz.org/doc/info/command.html"
+  target="_blank"
+>
+  Graphviz Command Line
+</a>
+<code>
+  $ echo 'digraph {{'{'}} a -{{'>'}} b {{'}'}}' | dot -Tsvg {{'>'}} graphviz.svg
+</code>
+
+<input
+  type="text"
+  id="myInput"
+  class="dot"
+  value="digraph {{'{'}} a -{{'>'}} b {{'}'}}"
+/>
+<button
+  (click)="genSVG()"
+>
+Generate SVG
+</button>
+
+<div
+  id="dot-example"
+>
+  {{ dotSource[0].source }}
+</div>
+
+<h3>
+  Website Integration with 
+  <a 
+    href="https://hpcc-systems.github.io/hpcc-js-wasm/"
+    target="_blank"
+  >
+    hpcc-js/wasm
+  </a>
+</h3>
+<a
+  href="https://www.npmjs.com/package/&#64;hpcc-js/wasm-graphviz?ref=pkgstats.com"
+>
+npm : &#64;hpcc-js/wasm-graphviz
+</a>
+<code>
+  $ npm install &#64;hpcc-js/wasm-graphviz
+</code>
+
+<h2>
+  <a href="https://www.qt.io/" target="_blank">Qt</a>
+</h2>
+<h3>
+  <a
+    href="https://wiki.qt.io/Building_Qt_6_from_Git"
+    target="_blank"
+  >
+    Building Qt6 from Github
+  </a>
+</h3>
+<pre><code class="language-bash">{{codeBuildQT}}</code></pre>
+
+<h4>Issue Record</h4>
+<ul>
+  <li>
+    error: ‘XKB_KEY_dead_lowline’ was not declared
+  </li>
+    <a
+      href="https://code.qt.io/cgit/qt/qtbase.git/commit/?id=8af35d27e8f02bbb99aef4ac495ed406e50e3cca"
+      target="_blank"
+    >
+      Apply patch because the key is removed in libxkbcommon 1.6.0
+    </a>
+  <li>
+    ‘uint32_t’ is not a member of ‘std’; did you mean ‘wint_t’?
+  </li>
+    Seems like the compiler version issue, fixed after removing the namespace
+</ul>
+<h4>Ref</h4>
+<ul>
+  <li>
+    <a
+      href="https://ithelp.ithome.com.tw/articles/10318655Qt"
+      target="_blank"
+    >
+      跨平台應用程式開發
+    </a>
+  </li>
+  <li>
+    <a
+      href="https://www.linux.org/threads/c-tutorial-create-qt-applications-without-qtcreator.18409/"
+      target="_blank"
+    >
+      C++ Tutorial: Create QT applications without QTCreator
+    </a>
+  </li>
+</ul>
+<h3>
+  Reference
+</h3>
+<ul>
+  <li>
+    <a
+      href="https://doc.qt.io/qt-6/index.html"
+      target="_blank"
+    >
+      Qt Document
+    </a>
+  </li>
+</ul>

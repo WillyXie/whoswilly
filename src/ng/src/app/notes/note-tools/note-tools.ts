@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { Base } from '@app/base/base'
 import { Graphviz } from '@hpcc-js/wasm-graphviz';
 
 @Component({
   selector: 'app-note-tools',
   imports: [],
   templateUrl: './note-tools.html',
-  styleUrl: '../notes.css'
+  styleUrl: './note-tools.css',
 })
-export class NoteTools implements OnInit{
+export class NoteTools extends Base implements OnInit{
   // Inner members
   dotExample = {
     id : "dot-example",
@@ -17,6 +18,19 @@ export class NoteTools implements OnInit{
   dotSource = [
     this.dotExample,
   ];
+
+  codeBuildQT: string = `
+$ git clone git://code.qt.io/qt/qt5.git qt6
+$ cd qt6
+$ git switch 6.5.3
+$ perl init-repository
+
+$ mkdir qt6-build
+$ cd qt6-build
+$ ../qt6/configure -prefix /path/to/install
+$ cmake --build . --parallel 4
+$ cmake --install .
+  `.trim();
 
   // Function definition
   async dot2svg (dot: string): Promise<any> {

@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-note-uvm',
   imports: [],
   templateUrl: './note-uvm.html',
-  styleUrl: '../notes.css'
+  styleUrl: './note-uvm.css'
 })
-export class NoteUvm {
-
-}
+export class NoteUvm {}
