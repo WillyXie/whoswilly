@@ -4,6 +4,7 @@ import { MatButtonModule }  from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 
 import { NotesModule } from './notes/notes-module';
+import { Mindmap } from './mindmap/mindmap';
 import { NoteAngular } from './notes/note-angular/note-angular';
 import { NoteAxi } from './notes/note-axi/note-axi';
 import { NoteComputerArchitecture } from './notes/note-computer-architecture/note-computer-architecture';
@@ -25,11 +26,25 @@ import { NoteWebsiteDevelopment } from './notes/note-website-development/note-we
   styleUrl: './bookshelf.css'
 })
 export class Bookshelf {
-  currentComponentType: Type<any> | null = NoteAngular;
+  contentList = [
+    { title: "Mindmap",               componentString: "mmap",},
+    { title: "Angular",               componentString: "ang",},
+    { title: "AXI",                   componentString: "axi",},
+    { title: "Computer Architecture", componentString: "ca",},
+    { title: "PSS",                   componentString: "pss",},
+    { title: "System Verilog",        componentString: "sv",},
+    { title: "Tools",                 componentString: "tools",},
+    { title: "UVM",                   componentString: "uvm",},
+    { title: "Website Development",   componentString: "web",},
+  ];
+
+  currentComponentType: Type<any> | null = Mindmap;
   //currentComponentInputs: { [key: string]: any } = { message: 'Initial message for Part 1' };
 
   switchComponent(componentName: string) {
-    if (componentName === 'ang') {
+    if (componentName === 'mmap') {
+      this.currentComponentType = Mindmap;
+    } else if (componentName === 'ang') {
       this.currentComponentType = NoteAngular;
     } else if (componentName === 'axi') {
       this.currentComponentType = NoteAxi;
