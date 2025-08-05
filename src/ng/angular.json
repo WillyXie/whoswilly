@@ -31,7 +31,10 @@
               "entry": "src/server.ts"
             },
             "outputPath": "dist/whoswilly",
-            "baseHref": "/whoswilly/"
+            "baseHref": "/whoswilly/",
+            "allowedCommonJsDependencies": [
+              "prismjs"
+            ]
           },
           "configurations": {
             "production": {

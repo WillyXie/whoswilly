@@ -15,7 +15,7 @@ import { NoteWebsiteDevelopment } from './notes/note-website-development/note-we
 export const routes: Routes = [
   {
     path: "",
-    redirectTo: "/home",
+    redirectTo: "home",
     pathMatch: "full",
   },
   {
