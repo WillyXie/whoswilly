@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+
 import { Base } from '@app/base/base'
 import { Graphviz } from '@hpcc-js/wasm-graphviz';
 
@@ -8,16 +9,29 @@ import { Graphviz } from '@hpcc-js/wasm-graphviz';
   templateUrl: './note-tools.html',
   styleUrl: './note-tools.css',
 })
-export class NoteTools extends Base implements OnInit{
-  // Inner members
-  dotExample = {
-    id : "dot-example",
-    source : "digraph G { Hello -> World }",
-  }
+export class NoteTools extends Base{
+  // Code block source
+  codeNVimInstall: string = `
+$ git clone https://github.com/neovim/neovim.git; cd neovim
+$ make CMAKE_BUILD_TYPE=RelWithDebInfo CMAKE_INSTALL_PREFIX=<install path>
+$ make install
+  `.trim();
 
-  dotSource = [
-    this.dotExample,
-  ];
+  codeLazyVimInstall: string = `
+$ sudo snap install tectonic
+$ sudo apt install fd-find ripgrep luarocks
+$ npm install -g @mermaid-js/mermaid-cli # mmdc
+$ git clone https://github.com/LazyVim/starter ~/.config/nvim
+  `.trim();
+
+  codeGraphizCmdExample: string = `
+$ sudo apt install graphviz
+$ echo 'digraph { a -> b }' | dot -Tsvg > graphviz.svg
+  `.trim();
+
+  codeInstallWASMGraphviz: string = `
+$ npm install @hpcc-js/wasm-graphviz
+`.trim();
 
   codeBuildQT: string = `
 $ git clone git://code.qt.io/qt/qt5.git qt6
@@ -32,33 +46,12 @@ $ cmake --build . --parallel 4
 $ cmake --install .
   `.trim();
 
-  // Function definition
-  async dot2svg (dot: string): Promise<any> {
-    const graphviz = await Graphviz.load();
-    const svg = graphviz.layout(dot, "svg", "dot");
+  // Graphviz dot source
+  dotExample: string = `
+    digraph G { a -> b }
+  `.trim();
 
-    const item = document.getElementById("dot-example");
-
-    return svg;
-  }
-
-  async genSVG () {
-    const graphviz = await Graphviz.load();
-    for (let idx=0; idx < this.dotSource.length; idx++) {
-      const dot = this.dotSource[idx].source;
-      const svg = graphviz.layout(dot, "svg", "dot");
-
-      const item = document.getElementById(this.dotSource[idx].id);
-      if (item==null) {
-        alert("Didn't get element");
-      } else {
-        item.innerHTML = svg;
-      }
-    }
-  }
-
-  // Life-cycle hooks
-  ngOnInit(){
-    this.genSVG();
-  }
+  override dotSource = [
+    {id: "dot-example", source: this.dotExample},
+  ];
 }

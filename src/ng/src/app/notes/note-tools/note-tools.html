@@ -1,5 +1,19 @@
 <h2>
   <a
+    href="https://www.lazyvim.org/"
+    target="_blank"
+  >
+    LazyVim
+  </a>
+</h2>
+<h3>Install NeoVim</h3>
+<pre><code class="language-bash">{{codeNVimInstall}}</code></pre>
+
+<h3>Install LazyVim</h3>
+<pre><code class="language-bash">{{codeLazyVimInstall}}</code></pre>
+
+<h2>
+  <a
     href="https://graphviz.org/"
     target="_blank"
   >
@@ -7,37 +21,16 @@
   </a>
 </h2>
 
-<h3>Download Graphviz</h3>
-<pre><code class="language-bash">$ sudo apt install graphviz</code></pre>
-
-<h3>Quick Start with CLI</h3>
-<a
-  href="https://graphviz.org/doc/info/command.html"
-  target="_blank"
->
-  Graphviz Command Line
-</a>
-<code>
-  $ echo 'digraph {{'{'}} a -{{'>'}} b {{'}'}}' | dot -Tsvg {{'>'}} graphviz.svg
-</code>
-
-<input
-  type="text"
-  id="myInput"
-  class="dot"
-  value="digraph {{'{'}} a -{{'>'}} b {{'}'}}"
-/>
-<button
-  (click)="genSVG()"
->
-Generate SVG
-</button>
-
-<div
-  id="dot-example"
->
-  {{ dotSource[0].source }}
-</div>
+<h3>Quick Start with
+  <a
+    href="https://graphviz.org/doc/info/command.html"
+    target="_blank"
+  >
+    Graphviz Command Line
+  </a>
+</h3>
+<pre><code class="language-bash">{{codeGraphizCmdExample}}</code></pre>
+<div id="dot-example"></div>
 
 <h3>
   Website Integration with 
@@ -48,14 +41,7 @@ Generate SVG
     hpcc-js/wasm
   </a>
 </h3>
-<a
-  href="https://www.npmjs.com/package/&#64;hpcc-js/wasm-graphviz?ref=pkgstats.com"
->
-npm : &#64;hpcc-js/wasm-graphviz
-</a>
-<code>
-  $ npm install &#64;hpcc-js/wasm-graphviz
-</code>
+<pre><code class="language-bash">{{codeInstallWASMGraphviz}}</code></pre>
 
 <h2>
   <a href="https://www.qt.io/" target="_blank">Qt</a>
