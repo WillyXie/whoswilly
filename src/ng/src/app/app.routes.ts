@@ -12,6 +12,9 @@ import { NoteTools } from './notes/note-tools/note-tools';
 import { NoteUvm } from './notes/note-uvm/note-uvm';
 import { NoteWebsiteDevelopment } from './notes/note-website-development/note-website-development';
 
+import { ProjectCPG } from './projects/project_cpg/project-cpg';
+import { ProjectN2NIC } from './projects/project_n2nic/project-n2nic';
+
 export const routes: Routes = [
   {
     path: "",
@@ -57,6 +60,14 @@ export const routes: Routes = [
   {
     path: "web",
     component: NoteWebsiteDevelopment,
+  },
+  {
+    path: "cpg",
+    component: ProjectCPG,
+  },
+  {
+    path: "n2nic",
+    component: ProjectN2NIC,
   },
   {
     path: "**",

@@ -9,7 +9,7 @@
         <a class="main-nav" routerLink="/home">HOME</a>
         <a class="main-nav" routerLink="/resume">RESUME</a>
 
-        <!-- Dropdown menu of contents -->
+        <!-- Dropdown menu of notes -->
         <div class="relative inline-block text-left">
           <!-- The main button that triggers the dropdown. -->
           <a
@@ -17,7 +17,7 @@
             id="menu-button"
             aria-expanded="true"
             aria-haspopup="true"
-            (click)="toggleDropdown()"
+            (click)="toggleNoteDropdown()"
           >
             NOTES
             <svg
@@ -32,7 +32,7 @@
         
           <!-- The dropdown menu itself. -->
           <div
-            *ngIf="isOpen"
+            *ngIf="isNoteOpen"
             class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
             role="menu"
             aria-orientation="vertical"
@@ -42,6 +42,45 @@
             <div class="py-1" role="none">
               <!-- Dropdown menu items -->
               @for (item of noteContents; track item.title) {
+                <a class="pill" routerLink="/{{item.link}}">{{item.title}}</a>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Dropdown menu of projects -->
+        <div class="relative inline-block text-left">
+          <!-- The main button that triggers the dropdown. -->
+          <a
+            class="main-nav inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            id="menu-button"
+            aria-expanded="true"
+            aria-haspopup="true"
+            (click)="toggleProjectDropdown()"
+          >
+            PROJECTS
+            <svg
+              class="-mr-1 ml-2 h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </a>
+        
+          <!-- The dropdown menu itself. -->
+          <div
+            *ngIf="isProjectOpen"
+            class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="menu-button"
+            tabindex="-1"
+          >
+            <div class="py-1" role="none">
+              <!-- Dropdown menu items -->
+              @for (item of projectContents; track item.title) {
                 <a class="pill" routerLink="/{{item.link}}">{{item.title}}</a>
               }
             </div>

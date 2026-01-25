@@ -15,10 +15,15 @@ import { RouterLink, RouterOutlet }     from '@angular/router';
 
 export class App {
   // If the dropdown is open or closed.
-  isOpen = false;
+  isNoteOpen = false;
+  isProjectOpen = false;
 
-  toggleDropdown() {
-    this.isOpen = !this.isOpen;
+  toggleNoteDropdown() {
+    this.isNoteOpen = !this.isNoteOpen;
+  }
+
+  toggleProjectDropdown() {
+    this.isProjectOpen = !this.isProjectOpen;
   }
 
   noteContents = [
@@ -30,6 +35,11 @@ export class App {
     { title: "Tools",                 link: "tools",},
     { title: "UVM",                   link: "uvm",},
     { title: "Website Development",   link: "web",},
+  ];
+
+  projectContents = [
+    { title: "C++ Playground",  link: "cpg",},
+    { title: "N2NIC",           link: "n2nic",},
   ];
 }
 
