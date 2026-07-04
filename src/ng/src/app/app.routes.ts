@@ -15,6 +15,8 @@ import { NoteWebsiteDevelopment } from './notes/note-website-development/note-we
 import { ProjectCPG } from './projects/project_cpg/project-cpg';
 import { ProjectN2NIC } from './projects/project_n2nic/project-n2nic';
 
+import { SidebarLayout } from './layout/sidebar-layout/sidebar-layout';
+
 export const routes: Routes = [
   {
     path: "",
@@ -29,46 +31,35 @@ export const routes: Routes = [
     path: "resume",
     component: Resume
   },
+
+  // Notes routes wrapped under SidebarLayout
   {
-    path: "mmap",
-    component: Mindmap,
+    path: "notes",
+    component: SidebarLayout,
+    children: [
+      { path: "", redirectTo: "mmap", pathMatch: "full" },
+      { path: "mmap", component: Mindmap },
+      { path: "axi", component: NoteAxi },
+      { path: "ca", component: NoteComputerArchitecture },
+      { path: "pss", component: NotePss },
+      { path: "sv", component: NoteSystemVerilog },
+      { path: "tools", component: NoteTools },
+      { path: "uvm", component: NoteUvm },
+      { path: "web", component: NoteWebsiteDevelopment },
+    ]
   },
+
+  // Projects routes wrapped under SidebarLayout
   {
-    path: "axi",
-    component: NoteAxi,
+    path: "projects",
+    component: SidebarLayout,
+    children: [
+      { path: "", redirectTo: "cpg", pathMatch: "full" },
+      { path: "cpg", component: ProjectCPG },
+      { path: "n2nic", component: ProjectN2NIC },
+    ]
   },
-  {
-    path: "ca",
-    component: NoteComputerArchitecture,
-  },
-  {
-    path: "pss",
-    component: NotePss,
-  },
-  {
-    path: "sv",
-    component: NoteSystemVerilog,
-  },
-  {
-    path: "tools",
-    component: NoteTools,
-  },
-  {
-    path: "uvm",
-    component: NoteUvm,
-  },
-  {
-    path: "web",
-    component: NoteWebsiteDevelopment,
-  },
-  {
-    path: "cpg",
-    component: ProjectCPG,
-  },
-  {
-    path: "n2nic",
-    component: ProjectN2NIC,
-  },
+
   {
     path: "**",
     component: Home
