@@ -34,6 +34,11 @@ export class SidebarLayout implements OnInit, OnDestroy {
     { title: "N2NIC",           link: "projects/n2nic" }
   ];
 
+  tripContents = [
+    { title: "Japan", link: "trips/japan" },
+    { title: "USA",   link: "trips/usa" }
+  ];
+
   constructor(private router: Router) {}
 
   ngOnInit() {
@@ -53,9 +58,13 @@ export class SidebarLayout implements OnInit, OnDestroy {
 
   private updateSidebarContent(url: string) {
     const isProject = url.includes('/projects');
+    const isTrip = url.includes('/trips');
     if (isProject) {
       this.title = 'PROJECTS';
       this.items = this.projectContents;
+    } else if (isTrip) {
+      this.title = 'TRIPS';
+      this.items = this.tripContents;
     } else {
       this.title = 'NOTES';
       this.items = this.noteContents;

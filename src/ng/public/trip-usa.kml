@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Trip to USA</name>
+    <description>My travel route and stops in USA</description>
+
+    <!-- Placemark 1: New York -->
+    <Placemark>
+      <name>New York City</name>
+      <description>Visited Times Square, Central Park, and the Statue of Liberty.</description>
+      <Point>
+        <coordinates>-74.0060,40.7128,0</coordinates>
+      </Point>
+    </Placemark>
+
+    <!-- Placemark 2: Grand Canyon -->
+    <Placemark>
+      <name>Grand Canyon National Park</name>
+      <description>Stunning views of the deep canyon and geological layers.</description>
+      <Point>
+        <coordinates>-112.1130,36.0544,0</coordinates>
+      </Point>
+    </Placemark>
+
+    <!-- Placemark 3: San Francisco -->
+    <Placemark>
+      <name>San Francisco (Golden Gate)</name>
+      <description>Walking across the Golden Gate Bridge and taking the historic cable cars.</description>
+      <Point>
+        <coordinates>-122.4194,37.7749,0</coordinates>
+      </Point>
+    </Placemark>
+
+    <!-- Route: Cross-Country flight path -->
+    <Placemark>
+      <name>Cross-Country Travel Route</name>
+      <description>Journey from NYC to SF via the Grand Canyon.</description>
+      <LineString>
+        <tessellate>1</tessellate>
+        <coordinates>
+          -74.0060,40.7128,0
+          -112.1130,36.0544,0
+          -122.4194,37.7749,0
+        </coordinates>
+      </LineString>
+    </Placemark>
+  </Document>
+</kml>

@@ -15,6 +15,9 @@ import { NoteWebsiteDevelopment } from './notes/note-website-development/note-we
 import { ProjectCPG } from './projects/project_cpg/project-cpg';
 import { ProjectN2NIC } from './projects/project_n2nic/project-n2nic';
 
+import { TripJapan } from './trips/trip-japan/trip-japan';
+import { TripUSA } from './trips/trip-usa/trip-usa';
+
 import { SidebarLayout } from './layout/sidebar-layout/sidebar-layout';
 
 export const routes: Routes = [
@@ -59,6 +62,31 @@ export const routes: Routes = [
       { path: "n2nic", component: ProjectN2NIC },
     ]
   },
+
+  // Trips routes wrapped under SidebarLayout
+  {
+    path: "trips",
+    component: SidebarLayout,
+    children: [
+      { path: "", redirectTo: "japan", pathMatch: "full" },
+      { path: "japan", component: TripJapan },
+      { path: "usa", component: TripUSA },
+    ]
+  },
+
+  // Redirects from old root-level paths to new nested paths
+  { path: "mmap", redirectTo: "notes/mmap", pathMatch: "full" },
+  { path: "axi", redirectTo: "notes/axi", pathMatch: "full" },
+  { path: "ca", redirectTo: "notes/ca", pathMatch: "full" },
+  { path: "pss", redirectTo: "notes/pss", pathMatch: "full" },
+  { path: "sv", redirectTo: "notes/sv", pathMatch: "full" },
+  { path: "tools", redirectTo: "notes/tools", pathMatch: "full" },
+  { path: "uvm", redirectTo: "notes/uvm", pathMatch: "full" },
+  { path: "web", redirectTo: "notes/web", pathMatch: "full" },
+  { path: "cpg", redirectTo: "projects/cpg", pathMatch: "full" },
+  { path: "n2nic", redirectTo: "projects/n2nic", pathMatch: "full" },
+  { path: "japan", redirectTo: "trips/japan", pathMatch: "full" },
+  { path: "usa", redirectTo: "trips/usa", pathMatch: "full" },
 
   {
     path: "**",
