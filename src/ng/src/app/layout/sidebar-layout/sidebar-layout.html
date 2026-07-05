@@ -1,19 +1,19 @@
-<div class="flex flex-row w-full max-w-7xl mx-auto items-start pt-10 pb-12 gap-8 px-4 md:px-8">
+<div class="flex flex-col md:flex-row w-full max-w-7xl mx-auto items-start pt-20 pb-12 gap-6 md:gap-8 px-4 md:px-8">
   <!-- Sticky Sidebar -->
   <aside 
-    class="sidebar bg-white border border-gray-200 rounded-2xl shadow-sm transition-all duration-300 ease-in-out sticky top-10 z-40 overflow-hidden flex flex-col shrink-0"
-    [class.w-64]="isExpanded()"
-    [class.w-16]="!isExpanded()"
+    class="sidebar bg-white border border-gray-200 rounded-2xl shadow-sm transition-all duration-300 ease-in-out sticky top-20 md:top-24 z-40 overflow-hidden flex flex-col shrink-0 w-full md:w-16"
+    [class.md:w-64]="isExpanded()"
+    [class.md:w-16]="!isExpanded()"
     (mouseenter)="expand()"
     (mouseleave)="collapse()"
   >
-    <!-- Sidebar Header (e.g., NOTES or PROJECTS) -->
-    <div class="flex items-center h-14 px-4 border-b border-gray-100 bg-gray-50/50">
+    <!-- Sidebar Header (hidden on mobile, shown on desktop) -->
+    <div class="hidden md:flex items-center h-14 px-4 border-b border-gray-100 bg-gray-50/50">
       <span class="text-indigo-600 font-extrabold tracking-wider transition-opacity duration-200" [ngClass]="isExpanded() ? 'opacity-100' : 'opacity-0 w-0 h-0 overflow-hidden'">
         {{ title }}
       </span>
       <span class="text-indigo-600 mx-auto" *ngIf="!isExpanded()">
-        <!-- SVG Icon based on type (Notes vs Projects) -->
+        <!-- SVG Icon based on type (Notes vs Projects vs Trips) -->
         <svg *ngIf="title === 'NOTES'" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
         </svg>
@@ -27,20 +27,20 @@
       </span>
     </div>
 
-    <!-- Navigation List -->
-    <nav class="flex-1 py-4 overflow-y-auto space-y-1 px-2">
+    <!-- Navigation List (horizontal scroll on mobile, vertical list on desktop) -->
+    <nav class="flex flex-row md:flex-col flex-1 py-2 md:py-4 overflow-x-auto md:overflow-y-auto space-x-2 md:space-x-0 md:space-y-1 px-3 md:px-2 scrollbar-none">
       <a 
         *ngFor="let item of items" 
         [routerLink]="['/' + item.link]" 
         routerLinkActive="bg-indigo-50 text-indigo-600 font-semibold"
-        class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-indigo-600 transition-all duration-200 cursor-pointer"
+        class="flex items-center space-x-2 md:space-x-3 px-3 py-2 md:py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-indigo-600 transition-all duration-200 cursor-pointer shrink-0"
       >
         <!-- Icon (abbreviation or default small icon) -->
         <span class="w-6 h-6 flex items-center justify-center bg-gray-100 rounded-lg text-xs font-bold text-gray-500 uppercase shrink-0">
           {{ getAbbreviation(item.title) }}
         </span>
-        <!-- Full Text -->
-        <span class="text-sm truncate transition-opacity duration-200" [ngClass]="isExpanded() ? 'opacity-100' : 'opacity-0 w-0 h-0 overflow-hidden'">
+        <!-- Full Text (hidden when collapsed on desktop, always visible on mobile) -->
+        <span class="text-sm truncate transition-opacity duration-200 md:block" [ngClass]="isExpanded() ? 'md:opacity-100' : 'md:opacity-0 md:w-0 md:h-0 md:overflow-hidden'">
           {{ item.title }}
         </span>
       </a>
@@ -48,7 +48,7 @@
   </aside>
 
   <!-- Main Content Area -->
-  <div class="flex-1 min-w-0 bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm">
+  <div class="w-full flex-1 min-w-0 bg-white border border-gray-200 rounded-2xl p-4 md:p-8 shadow-sm">
     <router-outlet></router-outlet>
   </div>
 </div>

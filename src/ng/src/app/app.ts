@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Component, signal }  from '@angular/core';
+import { CommonModule}      from '@angular/common';
+import { RouterLink, RouterOutlet, RouterLinkActive }     from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -8,10 +8,19 @@ import { RouterLink, RouterOutlet } from '@angular/router';
     CommonModule,
     RouterLink,
     RouterOutlet,
+    RouterLinkActive
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
+export class App {
+  isMobileMenuOpen = signal(false);
 
-export class App {}
+  toggleMobileMenu() {
+    this.isMobileMenuOpen.update(v => !v);
+  }
 
+  closeMobileMenu() {
+    this.isMobileMenuOpen.set(false);
+  }
+}

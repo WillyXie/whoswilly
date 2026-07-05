@@ -25,3 +25,13 @@ nav::-webkit-scrollbar-thumb {
 nav::-webkit-scrollbar-thumb:hover {
   background: #cbd5e1;
 }
+
+/* Hide scrollbar for horizontal scrolling on mobile */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

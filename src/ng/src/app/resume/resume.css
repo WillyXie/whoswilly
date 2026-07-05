@@ -205,3 +205,23 @@ hr {
     margin-bottom: 15px; /* Reduce spacing between sections for print */
   }
 }
+
+/* Mobile Responsiveness Styles */
+@media screen and (max-width: 650px) {
+  .flex-header {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+  .profile-pic {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+  .container {
+    padding: 20px 25px;
+    margin: 10px;
+  }
+  .education-entry {
+    flex-direction: column;
+  }
+}
