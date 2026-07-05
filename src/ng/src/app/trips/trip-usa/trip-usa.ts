@@ -36,7 +36,9 @@ export class TripUSA implements AfterViewInit, OnDestroy {
   private async initMap() {
     try {
       // Dynamically import leaflet in browser context only to prevent SSR crashes
-      this.L = await import('leaflet');
+      const leafletModule = await import('leaflet');
+      // Resolve CommonJS default export wrapper for ESM compatibility
+      this.L = (leafletModule as any).default || leafletModule;
       const L = this.L;
 
       // Resolve marker icon bug in bundlers
@@ -95,7 +97,7 @@ export class TripUSA implements AfterViewInit, OnDestroy {
     }
 
     const liveKmlUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
-    const localKmlUrl = `./trip-usa.kml?t=${timestamp}`;
+    const localKmlUrl = this.getAssetUrl(`trip-usa.kml?t=${timestamp}`);
 
     let kmlText = '';
     try {
@@ -240,6 +242,19 @@ export class TripUSA implements AfterViewInit, OnDestroy {
         }
       }
     }, 100);
+  }
+
+  private getAssetUrl(path: string): string {
+    let base = './';
+    if (isPlatformBrowser(this.platformId)) {
+      const baseEl = document.querySelector('base');
+      if (baseEl) {
+        base = baseEl.getAttribute('href') || './';
+      }
+    }
+    const cleanBase = base.endsWith('/') ? base : base + '/';
+    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    return cleanBase + cleanPath;
   }
 
   private clearMapLayers() {

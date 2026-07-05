@@ -33,7 +33,8 @@
             "outputPath": "dist/whoswilly",
             "baseHref": "/whoswilly/",
             "allowedCommonJsDependencies": [
-              "prismjs"
+              "prismjs",
+              "leaflet"
             ]
           },
           "configurations": {
