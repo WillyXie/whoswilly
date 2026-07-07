@@ -174,3 +174,238 @@ p {
   }
 }
 
+/* Custom shared components for Notes & Content Area */
+.note-content-area a:not(.pill):not(.btn) {
+  @apply text-indigo-600 hover:text-indigo-800 hover:underline font-medium transition-colors duration-200;
+}
+
+.note-content-area ul {
+  @apply list-disc pl-5 my-3 text-gray-700 text-base leading-relaxed;
+}
+
+.note-content-area ol {
+  @apply list-decimal pl-5 space-y-2 text-gray-700 text-base leading-relaxed my-4;
+}
+
+.note-content-area li {
+  @apply mb-1 text-gray-700 text-base leading-relaxed;
+}
+
+.note-content-area .note-callout {
+  @apply bg-indigo-50/50 border-l-4 border-indigo-600 p-5 rounded-r-xl my-6;
+}
+
+/* Vertically stacked text definition complement blocks */
+.note-content-area .note-definition-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+
+.note-content-area .note-definition-term {
+  border-left: 3px solid oklch(51.1% 0.262 276.966); /* indigo-600 */
+  padding: 0.75rem 1rem;
+  background-color: oklch(96.2% 0.018 272.314 / 0.4); /* indigo-50 @ 40% */
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.note-content-area .note-definition-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: oklch(51.1% 0.262 276.966); /* indigo-600 */
+  margin-bottom: 0.375rem;
+}
+
+.note-content-area .note-definition-term p {
+  font-size: 1rem;
+  color: oklch(37.3% 0.034 259.733); /* gray-700 */
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ─── Table of Contents panel ─────────────────────────────────── */
+.toc-panel {
+  display: none; /* hidden below lg */
+}
+
+@media (min-width: 1024px) {
+  .toc-panel {
+    display: flex;
+    flex-direction: column;
+    /* Collapsed: narrow strip matching the sidebar's collapsed width */
+    width: 3rem;
+    flex-shrink: 0;
+    position: sticky;
+    top: 6rem;                      /* clears the fixed header */
+    max-height: calc(100vh - 8rem);
+    overflow: hidden;
+    background: white;
+    border: 1px solid oklch(92.8% 0.006 264.531);   /* gray-200 */
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+    align-self: flex-start;
+    cursor: pointer;
+    transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: width;
+  }
+
+  .toc-panel.toc-panel-expanded {
+    width: 13rem;
+    overflow-y: auto;
+    cursor: default;
+    scrollbar-width: thin;
+    scrollbar-color: oklch(87.2% 0.01 258.338) transparent; /* gray-300 */
+  }
+}
+
+/* ── Header row (icon + title) ─────────────────────────────────── */
+.toc-panel .toc-header {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem;
+  min-height: 3rem;
+  white-space: nowrap;
+  border-bottom: 1px solid transparent;
+  transition: border-color 200ms ease;
+}
+
+.toc-panel.toc-panel-expanded .toc-header {
+  border-bottom-color: oklch(92.8% 0.006 264.531); /* gray-200 */
+}
+
+.toc-panel .toc-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  color: oklch(55.1% 0.027 264.364); /* gray-500 */
+  transition: color 200ms ease;
+}
+
+.toc-panel:hover .toc-icon {
+  color: oklch(51.1% 0.262 276.966); /* indigo-600 */
+}
+
+.toc-panel .toc-title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: oklch(51.1% 0.262 276.966); /* indigo-600 */
+  margin: 0;
+  padding: 0;
+  border: none;
+  /* Hidden when collapsed */
+  opacity: 0;
+  transition: opacity 150ms ease 50ms; /* slight delay so width animates first */
+}
+
+.toc-panel.toc-panel-expanded .toc-title {
+  opacity: 1;
+}
+
+/* ── Heading list ──────────────────────────────────────────────── */
+.toc-panel .toc-list {
+  list-style: none;
+  padding: 0.5rem 0.5rem 0.75rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  /* Hidden when collapsed */
+  opacity: 0;
+  transition: opacity 150ms ease 50ms;
+}
+
+.toc-panel.toc-panel-expanded .toc-list {
+  opacity: 1;
+}
+
+.toc-panel .toc-list li {
+  margin: 0;
+}
+
+.toc-panel .toc-list button {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: oklch(44.6% 0.03 256.802);  /* gray-600 */
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.toc-panel .toc-list button:hover {
+  color: oklch(51.1% 0.262 276.966);           /* indigo-600 */
+  background-color: oklch(96.2% 0.018 272.314 / 0.5);
+}
+
+.toc-panel .toc-list button.toc-active {
+  color: oklch(51.1% 0.262 276.966);           /* indigo-600 */
+  font-weight: 600;
+  background-color: oklch(96.2% 0.018 272.314 / 0.6);
+}
+
+/* Indent levels */
+.toc-panel .toc-list button.toc-h1 { padding-left: 0.5rem; }
+.toc-panel .toc-list button.toc-h2 { padding-left: 1rem; }
+.toc-panel .toc-list button.toc-h3 { padding-left: 1.5rem; font-size: 0.6875rem; }
+
+/* ─── Back to Top Button ───────────────────────────────────────── */
+.back-to-top-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 50;
+  display: flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: oklch(51.1% 0.262 276.966); /* indigo-600 */
+  color: white;
+  border: none;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  cursor: pointer;
+  outline: none;
+  
+  /* Collapsed/Hidden State */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(1rem);
+  
+  /* Smooth transitions */
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 200ms ease,
+              scale 200ms ease;
+}
+
+.back-to-top-btn:hover {
+  background-color: oklch(43.2% 0.232 275.524); /* indigo-700 */
+  scale: 1.08;
+}
+
+.back-to-top-btn:active {
+  scale: 0.95;
+}
+
+.back-to-top-btn.back-to-top-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+

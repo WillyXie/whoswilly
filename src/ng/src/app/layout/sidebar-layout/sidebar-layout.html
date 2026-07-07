@@ -46,9 +46,39 @@
       </a>
     </nav>
   </aside>
+  <!-- Table of Contents (large screens only) -->
+  <nav class="toc-panel"
+       [class.toc-panel-expanded]="isTocExpanded()"
+       *ngIf="tocHeadings().length > 0"
+       (mouseenter)="expandToc()"
+       (mouseleave)="collapseToc()">
+
+    <!-- Header row: icon always visible, title fades in when expanded -->
+    <div class="toc-header">
+      <svg class="toc-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+           stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+      </svg>
+      <span class="toc-title">On this page</span>
+    </div>
+
+    <!-- Heading list: slides in when expanded -->
+    <ul class="toc-list">
+      <li *ngFor="let heading of tocHeadings()">
+        <button
+          [class.toc-active]="activeTocId() === heading.id"
+          [class.toc-h1]="heading.level === 1"
+          [class.toc-h2]="heading.level === 2"
+          [class.toc-h3]="heading.level === 3"
+          (click)="scrollTo(heading.id)"
+        >{{ heading.text }}</button>
+      </li>
+    </ul>
+  </nav>
 
   <!-- Main Content Area -->
-  <div class="w-full flex-1 min-w-0 bg-white border border-gray-200 rounded-2xl p-4 md:p-8 shadow-sm">
+  <div class="w-full flex-1 min-w-0 bg-white border border-gray-200 rounded-2xl p-4 md:p-8 shadow-sm note-content-area">
     <router-outlet></router-outlet>
   </div>
 </div>

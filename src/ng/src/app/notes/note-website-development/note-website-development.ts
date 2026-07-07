@@ -45,9 +45,10 @@ import 'prismjs/components/prism-typescript';
           <span>RESUME</span>
         </button>
   noteContents = [
-    { title: "Mindmap",               componentString: "mmap",},
     { title: "AXI",                   componentString: "axi",},
     { title: "Computer Architecture", componentString: "ca",},
+    { title: "Little Book of Semaphore", componentString: "lbs",},
+    { title: "Mindmap",               componentString: "mmap",},
     { title: "PSS",                   componentString: "pss",},
     { title: "System Verilog",        componentString: "sv",},
     { title: "Tools",                 componentString: "tools",},
@@ -67,6 +68,8 @@ import 'prismjs/components/prism-typescript';
       this.curComponentType = NoteAxi;
     } else if (componentName === 'ca') {
       this.curComponentType = NoteComputerArchitecture;
+    } else if (componentName === 'lbs') {
+      this.curComponentType = NoteLittleBookOfSemaphore;
     } else if (componentName === 'pss') {
       this.curComponentType = NotePss;
     } else if (componentName === 'sv') {
