@@ -1,0 +1,296 @@
+<h1>The Little Book of Semaphores</h1>
+
+<div class="note-callout">
+  <p class="text-gray-700 text-sm leading-relaxed mb-4">
+    This note serves as a personal study guide and summary of <strong><em>The Little Book of 
+    Semaphores</em> by Allen B. Downey <a [routerLink]="[]" fragment="ref-1">[1]</a>
+    <a [routerLink]="[]" fragment="ref-2">[2]</a></strong>. It outlines key synchronization 
+    patterns and constructs detailed in the book to provide a quick, accessible reference.
+  </p>
+</div>
+
+<h2>Preface</h2>
+<p>
+  The author wrote the book to address standard operating system curricula that present 
+  synchronization as a single module with fixed solutions, leaving students unable to solve novel 
+  concurrency problems independently. Developed during his teaching at Wellesley College—using 
+  hands-on puzzles—and refined at Olin College into a dedicated synchronization course, the book 
+  is designed to build a deep intuition for synchronization. The intention is to teach 
+  synchronization as a set of modular, composable patterns that can be understood in isolation and 
+  combined to solve complex concurrency problems.
+</p>
+
+<h2>Chapter 1: Introduction to Synchronization</h2>
+<h3>1.1 Non-Determinism of Program Execution</h3>
+<p>
+  To reason about concurrent software and synchronization, we require a clear model of how computer 
+  programs run. In the simplest execution model, computers execute instructions one by one in 
+  sequence. The order of events is entirely deterministic and can be inferred directly from the 
+  program text: statement A will always execute first if it is written before statement B.
+</p>
+<p>
+  However, this straightforward ordering breaks down when <strong>parallel computation</strong> and 
+  <strong>multi-threading</strong> are introduced. During execution, different physical cores run 
+  instructions simultaneously, and multiple threads are scheduled dynamically and unpredictably by 
+  the operating system. Consequently, it becomes impossible to determine whether a statement on one 
+  processor/thread executes before, after, or at the exact same time as a statement on another. 
+  This unpredictable timing making program state unpredictable is known as 
+  <strong>non-determinism</strong>.
+</p>
+
+<!-- Definition complement blocks -->
+<div class="note-definition-grid">
+  <div class="note-definition-term">
+    <span class="note-definition-label">Parallel Computation</span>
+    <p>A hardware configuration where a computer features <strong>multiple processors or physical cores</strong> operating simultaneously, allowing different execution paths to run in true physical concurrency at the exact same time.</p>
+  </div>
+  <div class="note-definition-term">
+    <span class="note-definition-label">Multi-Threading &amp; Threads</span>
+    <p>A software abstraction where a <strong>thread</strong> represents a sequential flow of instructions. On a single core, multiple threads are interleaved dynamically (context-switched) by the scheduler, creating the illusion of parallel execution.</p>
+  </div>
+</div>
+
+<!-- Non-Determinism Examples -->
+<p>
+  A few different program puzzles are demonstrated to show the consequences of non-determinism. 
+  Each one shows a simple multi-threaded program whose output or final state cannot be predicted 
+  in advance but depends on the order in which the statements are executed, which is called the 
+  <strong>execution path</strong>.
+</p>
+
+<h4>Puzzle 1 — Who Prints First</h4>
+<p>
+  When two threads both call print function, the operating system can interleave their output at any
+  point or make them executed by different cores at the same time. Even individual characters of a
+  single string may be split across context switches, producing garbled results that are impossible 
+  to anticipate.
+</p>
+<pre><code class="language-c">{{codePrint}}</code></pre>
+
+<h4>Puzzle 2 — Concurrent Writes</h4>
+<p>
+  When two threads assign different values to the <strong>shared variable</strong>, the final 
+  result depends entirely on which thread's write happens last. There is no way to determine 
+  this order from the program text alone.
+</p>
+<pre><code class="language-c">{{codeWrite}}</code></pre>
+
+<h4>Puzzle 3 — Concurrent Updates</h4>
+<p>
+  A compound statement like <strong>count += 1</strong> is not a single hardware instruction—it
+  compiles into a read, an arithmetic operation, and a write. If two threads interleave across these
+  three steps, one thread's increment can be silently overwritten, so the counter ends up smaller 
+  than expected. This class of bug is called a <strong>race condition</strong>.
+</p>
+<pre><code class="language-c">{{codeUpdate}}</code></pre>
+
+<div class="note-definition-grid">
+  <div class="note-definition-term">
+    <span class="note-definition-label">Shared Variables</span>
+    <p>
+      For most of time variables are <strong>local</strong>, meaning they belong to a single thread. 
+      There tend to be few synchronization problems, because threads doesn't interact upon them. But 
+      some variables are <strong>shared</strong> among different threads for interaction; this is 
+      one of the way they interact with each others and can cause issues if they are not 
+      synchronized properly.
+    </p>
+  </div>
+  <div class="note-definition-term">
+    <span class="note-definition-label">Race Conditions</span>
+    <p>
+      The outcome of execution depends on which thread wins the "race" to read/write, potentially 
+      yielding incorrect, inconsistent states.
+    </p>
+  </div>
+</div>
+
+<h3>1.2 Synchronization</h3>
+<p>
+  In common use, synchronization implies making two or more events occur at the exact same time. 
+  In computer systems, <strong>Synchronization refers to enforcement of relationships among 
+  events—covering any number of events and any relationship (<em>before/during/after</em>)</strong>.
+</p>
+<p>
+  Programmers manage these relationships using <strong>synchronization constraints</strong>, which 
+  define the required execution order of events. The two most fundamental constraints are:
+</p>
+<ul>
+  <li>
+    <strong>Serialization:</strong> Event A must happen before Event B (e.g., a producer must 
+    write data before a consumer reads it).
+  </li>
+  <li>
+    <strong>Mutual Exclusion:</strong> Event A and Event B must not happen at the same time (e.g., 
+    two threads must not write to the same shared variable simultaneously).
+  </li>
+</ul>
+
+<h4>Serialization - The Lunch Puzzle &amp; Message Passing</h4>
+<p>
+  Imagine the case that Alice and Bob live in different cities, and Alice wants to guarantee that 
+  she eats lunch before Bob today without a synchronized clocks to coordinate. The solution is 
+  simple: Alice tells Bob, <strong><em>"Do not eat lunch until I call you."</em></strong> Alice 
+  eats lunch, and only when she is finished, she calls Bob.<br>
+  In computer systems, this call acts as a <strong>message passing</strong> mechanism. Event A 
+  (Alice's lunch) is guaranteed to complete before Event B (Bob's lunch) starts because Bob's 
+  execution thread is blocked (waiting) until the message arrives.
+</p>
+
+<h4>Mutual Exclusion - Nuclear Reactor Puzzle</h4>
+<p>
+  Imagine you and Bob monitor a reactor from remote stations. You can both take lunch breaks, but 
+  only when you never do so simultaneously. In this case, you'll need to <strong>call to make sure 
+  another one is not having a break before you can do so.</strong><br>
+  Recall the <strong>Concurrent Updates</strong> example: to ensure correctness, we must make 
+  uninterruptible read-modify-write steps. While some computer architectures provide 
+  <strong>atomic</strong> instructions, software systems typically rely on synchronization 
+  primitives—like semaphores—to control concurrent access to shared variables.
+</p>
+<div class="note-definition-grid">
+  <div class="note-definition-term">
+    <span class="note-definition-label">Atomic Instruction</span>
+    <p>
+      An instruction that executes as a <strong>single, indivisible step</strong>. Once it begins, 
+      it runs to completion without interruption or interleaving from other processors/threads, 
+      preventing other concurrent execution paths from observing any intermediate states.
+    </p>
+  </div>
+</div>
+
+<h2>Chapter 2: Semaphores</h2>
+<h3>2.1 Definition</h3>
+<p>
+  Semaphore was first proposed by <strong>Edsger Dijkstra</strong>
+  <a [routerLink]="[]" fragment="ref-3">[3]</a> as a synchronization primitive to manage shared 
+  resource access.<a [routerLink]="[]" fragment="ref-4">[4]</a> It acts as a protected integer 
+  value that can only be controlled through operations with the following attributes:
+</p>
+
+<ol class="list-decimal pl-6 space-y-2 mb-6">
+  <li>
+    <strong>Restricted Interface:</strong> When you create a semaphore, you can initialize its 
+    value to any integer. After initialization, you can only increment or decrement it. You 
+    <em>cannot</em> read the current value of the semaphore directly.
+  </li>
+  <li>
+    <strong>Blocking on Decrement:</strong> When a thread decrements the semaphore, if the result 
+    is negative, the thread immediately blocks itself through notifying the scheduler. It cannot 
+    continue executing until another thread increments the semaphore.
+  </li>
+  <li>
+    <strong>Unblocking on Increment:</strong> When a thread increments the semaphore, if there are 
+    other threads waiting, one of the waiting threads gets unblocked and is marked ready to run.
+  </li>
+</ol>
+
+<p>
+  Depending on whether the internal counter is, the value of a semaphore conveys the exact state of 
+  the system:
+</p>
+<ul>
+  <li>
+    <p>
+      <strong>Positive:</strong> Represents the number of threads that can perform a decrement 
+      operation without blocking (equivalent to available resource).
+    </p>
+  </li>
+  <li>
+    <p>
+      <strong>Zero:</strong> Means there are no threads waiting in the blocked queue, but the next 
+      thread that attempts to decrement will block immediately.
+    </p>
+  </li>
+  <li>
+    <p>
+      <strong>Negative:</strong> Represents the exact number of threads that are currently blocked 
+      and waiting in the queue.
+    </p>
+  </li>
+</ul>
+
+<h3>2.2 Operation Terminology</h3>
+<p>
+  Semaphores have been implemented across many different operating systems and languages, different 
+  terms are used to describe the increment and decrement operations:
+</p>
+<ul>
+  <li>
+    <strong>P / V:</strong> Dijkstra's original Dutch notation (<<strong>P</strong>> for 
+    <em>proberen</em> - "to test/try", and <strong>V</strong> for <em>verhogen</em> - 
+    "to increment/raise").
+  </li>
+  <li><strong>decrement / increment:</strong> Describe what the operations do upon the value.</li>
+  <li><strong>wait / signal:</strong> Describe what they are used for.</li>
+</ul>
+
+<h3>2.3 Why Semaphores?</h3>
+<p>
+  Semaphores are highly favored in concurrent programming because they impose deliberate 
+  constraints that help programmers avoid synchronization errors. By hiding the internal counter 
+  and restricting operations to atomic increments and decrements, they provide a clean, organized 
+  abstraction that makes it easy to reason about and demonstrate the correctness of concurrency 
+  solutions.<br>
+  Furthermore, semaphores are supported most of the modern systems, they provide efficient 
+  block-and-wake solutions both highly performant and portable across different architectures.
+</p>
+
+<h2>Chapter 3: Basic Synchronization Patterns (TBD)</h2>
+<h3>3.1 Mutual Exclusion (Mutex)</h3>
+<!--
+<p>
+  Ensures that only one thread can access a shared resource or critical section at a time.
+</p>
+<pre><code class="language-c">{{codeMutex}}</code></pre>
+-->
+<h3>3.2 Rendezvous</h3>
+<!--
+<p>
+  Guarantees that two threads reach a common point of execution before either proceeds.
+</p>
+<pre><code class="language-c">{{codeRendezvous}}</code></pre>
+-->
+<h3>3.3 Barrier</h3>
+<!--
+<p>
+  Generalizes the rendezvous to <em>N</em> threads, preventing any thread from proceeding until all 
+  have arrived.
+</p>
+-->
+<h3>3.4 Multiplex</h3>
+<!--
+<p>
+  Limits the number of concurrent threads in a critical section to at most <em>N</em>.
+</p>
+-->
+
+<h2>Chapter 4: Classical Synchronization Problems (TBD)</h2>
+<h2>Chapter 5: Less Classical Synchronization Problems (TBD)</h2>
+<h2>Chapter 6: Not-So-Classical Problems (TBD)</h2>
+<h2>Chapter 7: Not Remotely Classical Problems (TBD)</h2>
+<h2>Chapter 8: Synchronization in Python (TBD)</h2>
+<h2>Chapter 9: Synchronization in C (TBD)</h2>
+
+<h2>References</h2>
+<ol>
+  <li id="ref-1">
+    <a href="https://greenteapress.com/wp/semaphores/" target="_blank" rel="noopener">
+      The Little Book of Semaphores (Official Book Page)
+    </a>
+  </li>
+  <li id="ref-2">
+    <a href="https://greenteapress.com/semaphores/LittleBookOfSemaphores.pdf" target="_blank" rel="noopener">
+      The Little Book of Semaphores (PDF Version 2.2.1)
+    </a>
+  </li>
+  <li id="ref-3">
+    <a href="https://www.cs.utexas.edu/users/EWD/ewd01xx/EWD123.PDF" target="_blank" rel="noopener">
+      EWD123: Cooperating Sequential Processes by Edsger W. Dijkstra (PDF)
+    </a>
+  </li>
+  <li id="ref-4">
+    <a href="https://en.wikipedia.org/wiki/Semaphore_(programming)" target="_blank" rel="noopener">
+      Wikipedia: Semaphore (Programming)
+    </a>
+  </li>
+</ol>
+

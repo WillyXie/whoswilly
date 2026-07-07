@@ -6,6 +6,7 @@ import { Resume }      from './resume/resume';
 import { Mindmap } from './mindmap/mindmap';
 import { NoteAxi } from './notes/note-axi/note-axi';
 import { NoteComputerArchitecture } from './notes/note-computer-architecture/note-computer-architecture';
+import { NoteLittleBookOfSemaphore } from './notes/note-little-book-of-semaphore/note-little-book-of-semaphore';
 import { NotePss } from './notes/note-pss/note-pss';
 import { NoteSystemVerilog } from './notes/note-system-verilog/note-system-verilog';
 import { NoteTools } from './notes/note-tools/note-tools';
@@ -41,9 +42,10 @@ export const routes: Routes = [
     component: SidebarLayout,
     children: [
       { path: "", redirectTo: "mmap", pathMatch: "full" },
-      { path: "mmap", component: Mindmap },
       { path: "axi", component: NoteAxi },
       { path: "ca", component: NoteComputerArchitecture },
+      { path: "lbs", component: NoteLittleBookOfSemaphore },
+      { path: "mmap", component: Mindmap },
       { path: "pss", component: NotePss },
       { path: "sv", component: NoteSystemVerilog },
       { path: "tools", component: NoteTools },
@@ -75,9 +77,10 @@ export const routes: Routes = [
   },
 
   // Redirects from old root-level paths to new nested paths
-  { path: "mmap", redirectTo: "notes/mmap", pathMatch: "full" },
   { path: "axi", redirectTo: "notes/axi", pathMatch: "full" },
   { path: "ca", redirectTo: "notes/ca", pathMatch: "full" },
+  { path: "lbs", redirectTo: "notes/lbs", pathMatch: "full" },
+  { path: "mmap", redirectTo: "notes/mmap", pathMatch: "full" },
   { path: "pss", redirectTo: "notes/pss", pathMatch: "full" },
   { path: "sv", redirectTo: "notes/sv", pathMatch: "full" },
   { path: "tools", redirectTo: "notes/tools", pathMatch: "full" },
