@@ -8,6 +8,6 @@ It wold be my honor if you get to learn something as well through reading my web
 ```
 $ cd src/ng
 $ npm install
-$ ng serve
+$ ng serve --poll=2000 // Manually polling update per 2 second
 ```
 

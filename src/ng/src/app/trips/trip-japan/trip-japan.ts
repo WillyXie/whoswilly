@@ -14,6 +14,8 @@ export class TripJapan implements AfterViewInit, OnDestroy {
 
   isLoading = signal(true);
   currentLayerId = signal('');
+  legendGroups = signal<any[]>([]);
+  private tempGroups = new Map<string, any>();
 
   layers = [
     { name: '🇯🇵 All Locations & Routes', id: '' },
@@ -80,10 +82,13 @@ export class TripJapan implements AfterViewInit, OnDestroy {
   }
 
   private async loadKml(L: any): Promise<any[]> {
+    this.tempGroups.clear();
+    this.legendGroups.set([]);
+    
     const markerPositions: any[] = [];
     const timestamp = Date.now();
 
-    // Construct URLs with timestamp to prevent caching
+    // Construct target URL with timestamp to prevent caching
     let targetUrl = `https://www.google.com/maps/d/kml?mid=1-kkfhd7anFUA2ruUD0mckaHG7m6xjHI&forcekml=1&t=${timestamp}`;
 
     // Append layer ID (lid) if specified
@@ -92,33 +97,47 @@ export class TripJapan implements AfterViewInit, OnDestroy {
       targetUrl += `&lid=${selectedLayer}`;
     }
 
-    const liveKmlUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
-    const localKmlUrl = this.getAssetUrl(`trip-japan.kml?t=${timestamp}`);
+    // List of CORS proxies to try for reliability
+    const proxyUrls = [
+      `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`
+    ];
 
     let kmlText = '';
-    try {
-      // Try to fetch live data via CORS proxy first
-      const response = await fetch(liveKmlUrl);
-      if (!response.ok) {
-        throw new Error(`Live KML fetch failed with status: ${response.status}`);
-      }
-      kmlText = await response.text();
-      console.log(`Successfully fetched live map data (Layer: ${selectedLayer || 'All'}) from Google My Maps.`);
-    } catch (e) {
-      console.warn('Could not fetch live map data via CORS proxy. Falling back to local KML.', e);
+    let success = false;
+
+    for (const proxyUrl of proxyUrls) {
       try {
-        const response = await fetch(localKmlUrl);
+        console.log(`Attempting to fetch live KML map data via proxy: ${proxyUrl.split('?')[0]}...`);
+        const response = await fetch(proxyUrl);
         if (!response.ok) {
-          throw new Error(`Local KML fetch failed with status: ${response.status}`);
+          throw new Error(`Proxy returned status: ${response.status}`);
         }
         kmlText = await response.text();
-      } catch (localError) {
-        console.error('Failed to load both live and local KML map data:', localError);
-        return [];
+        if (kmlText && kmlText.includes('<kml')) {
+          success = true;
+          console.log(`Successfully fetched live map data (Layer: ${selectedLayer || 'All'}) from Google My Maps.`);
+          break;
+        } else {
+          throw new Error('Response did not contain valid KML data.');
+        }
+      } catch (error) {
+        console.warn(`Failed to fetch KML via proxy. Error: ${error}`);
       }
     }
 
-    return await this.parseKmlText(kmlText, L, markerPositions);
+    if (!success) {
+      console.error('Failed to load live KML map data from all proxies.');
+      return [];
+    }
+
+    const positions = await this.parseKmlText(kmlText, L, markerPositions);
+
+    // Convert tempGroups map to array for the legend component
+    const groupsArray = Array.from(this.tempGroups.values());
+    this.legendGroups.set(groupsArray);
+
+    return positions;
   }
 
   private async parseKmlText(kmlText: string, L: any, markerPositions: any[]): Promise<any[]> {
@@ -158,6 +177,103 @@ export class TripJapan implements AfterViewInit, OnDestroy {
         }
       }
 
+      // Parse Style elements to extract color and icon url
+      const stylesMap = new Map<string, { iconUrl: string; color: string }>();
+      const styleNodes = kmlDoc.getElementsByTagName('Style');
+      
+      const kmlColorToCssHex = (kmlColor: string): string => {
+        if (!kmlColor || kmlColor.length < 8) return '#0288d1';
+        // KML hex color format is aabbggrr (Alpha, Blue, Green, Red)
+        const b = kmlColor.slice(2, 4);
+        const g = kmlColor.slice(4, 6);
+        const r = kmlColor.slice(6, 8);
+        return `#${r}${g}${b}`;
+      };
+
+      const getColorName = (hex: string): string => {
+        const h = hex.toLowerCase();
+        if (h === '#0288d1' || h === '#00a9e0') return 'Blue';
+        if (h === '#673ab7') return 'Purple';
+        if (h === '#ff5252' || h === '#d32f2f') return 'Red';
+        if (h === '#4caf50' || h === '#2e7d32') return 'Green';
+        if (h === '#ff9800' || h === '#f57c00') return 'Orange';
+        if (h === '#ffeb3b' || h === '#fbc02d') return 'Yellow';
+        if (h === '#e91e63' || h === '#c2185b') return 'Pink';
+        if (h === '#00bcd4' || h === '#0097a7') return 'Cyan';
+        return 'Category';
+      };
+
+      for (let i = 0; i < styleNodes.length; i++) {
+        const styleNode = styleNodes[i];
+        const id = styleNode.getAttribute('id');
+        if (id) {
+          const iconStyle = styleNode.getElementsByTagName('IconStyle')[0];
+          const iconUrl = iconStyle?.getElementsByTagName('Icon')[0]?.getElementsByTagName('href')[0]?.textContent?.trim() || '';
+          const kmlColor = iconStyle?.getElementsByTagName('color')[0]?.textContent?.trim() || '';
+          const color = kmlColorToCssHex(kmlColor);
+          stylesMap.set(id, { iconUrl, color });
+        }
+      }
+
+      // Parse StyleMaps
+      const styleMapNodes = kmlDoc.getElementsByTagName('StyleMap');
+      const styleMapToStyleId = new Map<string, string>();
+      for (let i = 0; i < styleMapNodes.length; i++) {
+        const styleMapNode = styleMapNodes[i];
+        const id = styleMapNode.getAttribute('id');
+        if (id) {
+          const pairs = styleMapNode.getElementsByTagName('Pair');
+          for (let j = 0; j < pairs.length; j++) {
+            const key = pairs[j].getElementsByTagName('key')[0]?.textContent?.trim();
+            if (key === 'normal') {
+              const styleUrl = pairs[j].getElementsByTagName('styleUrl')[0]?.textContent?.trim() || '';
+              const cleanStyleUrl = styleUrl.replace(/^#/, '');
+              styleMapToStyleId.set(id, cleanStyleUrl);
+              break;
+            }
+          }
+        }
+      }
+
+      // Resolve style color helper
+      const getPlacemarkColor = (styleUrl: string): string => {
+        const cleanUrl = styleUrl.replace(/^#/, '');
+        const match = cleanUrl.match(/icon-\d+-([0-9A-Fa-f]{6})/);
+        if (match) {
+          return `#${match[1]}`;
+        }
+        
+        // Fallback to parsed Style nodes
+        let resolvedId = styleMapToStyleId.get(cleanUrl) || cleanUrl;
+        let style = stylesMap.get(resolvedId);
+        if (!style) {
+          style = stylesMap.get(cleanUrl);
+        }
+        return style ? style.color : '#0288d1';
+      };
+
+      // Custom Leaflet marker builder with SVG teardrop filled with the category color
+      const createCustomMarkerIcon = (color: string) => {
+        const pinColor = color || '#0288d1';
+
+        const svgHtml = `
+          <div style="display: flex; align-items: center; justify-content: center; width: 30px; height: 42px;">
+            <svg width="30" height="42" viewBox="0 0 30 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.35));">
+              <path d="M15 0C6.71573 0 0 6.71573 0 15C0 24.375 13.125 39.375 14.25 40.625C14.625 41.0625 15.375 41.0625 15.75 40.625C16.875 39.375 30 24.375 30 15C30 6.71573 23.2843 0 15 0Z" fill="${pinColor}"/>
+              <circle cx="15" cy="15" r="5" fill="white"/>
+            </svg>
+          </div>
+        `;
+        
+        return L.divIcon({
+          html: svgHtml,
+          className: 'custom-map-marker',
+          iconSize: [30, 42],
+          iconAnchor: [15, 42],
+          popupAnchor: [0, -36]
+        });
+      };
+
       const placemarks = kmlDoc.getElementsByTagName('Placemark');
       console.log(`Parsing KML file: found ${placemarks.length} placemarks.`);
 
@@ -173,11 +289,35 @@ export class TripJapan implements AfterViewInit, OnDestroy {
           if (coordsStr) {
             const [lng, lat] = coordsStr.split(',').map(Number);
             if (!isNaN(lat) && !isNaN(lng)) {
-              const marker = L.marker([lat, lng])
-                .bindPopup(`<div class="p-1"><h4 class="font-bold text-base mt-0 mb-1 text-indigo-600">${name}</h4><p class="text-sm text-gray-600 m-0">${description}</p></div>`)
+              const styleUrl = placemark.getElementsByTagName('styleUrl')[0]?.textContent?.trim() || '';
+              const color = getPlacemarkColor(styleUrl);
+              
+              const markerIcon = createCustomMarkerIcon(color);
+
+              const marker = L.marker([lat, lng], { icon: markerIcon })
+                .bindPopup(`<div class="p-2"><h4 class="font-bold text-base mt-0 mb-1 text-indigo-600">${name}</h4><p class="text-sm text-gray-600 m-0">${description}</p></div>`)
                 .addTo(this.map);
               this.mapElements.push(marker);
               markerPositions.push([lat, lng]);
+
+              // Add to legend groups
+              const styleKey = color;
+              let group = this.tempGroups.get(styleKey);
+              if (!group) {
+                const colorName = getColorName(color);
+                group = {
+                  color,
+                  styleName: colorName !== 'Category' ? `${colorName} Locations` : `Category (${color})`,
+                  locations: []
+                };
+                this.tempGroups.set(styleKey, group);
+              }
+              group.locations.push({
+                name,
+                description,
+                coords: [lat, lng],
+                markerInstance: marker
+              });
             }
           }
         }
@@ -199,7 +339,7 @@ export class TripJapan implements AfterViewInit, OnDestroy {
                 opacity: 0.8,
                 dashArray: '5, 10'
               })
-              .bindPopup(`<div class="p-1"><h4 class="font-bold text-base mt-0 mb-1 text-indigo-600">${name}</h4><p class="text-sm text-gray-600 m-0">${description}</p></div>`)
+              .bindPopup(`<div class="p-2"><h4 class="font-bold text-base mt-0 mb-1 text-indigo-600">${name}</h4><p class="text-sm text-gray-600 m-0">${description}</p></div>`)
               .addTo(this.map);
               this.mapElements.push(polyline);
             }
@@ -238,6 +378,23 @@ export class TripJapan implements AfterViewInit, OnDestroy {
         }
       }
     }, 100);
+  }
+
+  zoomToMarker(loc: any) {
+    if (this.map && loc.markerInstance) {
+      const latLng = loc.markerInstance.getLatLng();
+      this.map.setView(latLng, 14);
+      loc.markerInstance.openPopup();
+      
+      const mapElement = document.getElementById('map');
+      if (mapElement) {
+        mapElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }
+
+  getTotalLocationsCount(): number {
+    return this.legendGroups().reduce((acc, g) => acc + g.locations.length, 0);
   }
 
   private getAssetUrl(path: string): string {
